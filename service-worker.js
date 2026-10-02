@@ -1,4 +1,4 @@
-const CACHE_NAME = "52-ricordi-v1";
+const CACHE_NAME = "52-ricordi-v2";
 
 const FILES_TO_CACHE = [
   "/52-ricordi/",
