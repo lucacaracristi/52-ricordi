@@ -3,111 +3,852 @@
 
 <head>
   <meta charset="UTF-8">
-
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
   <title>52 Ricordi</title>
 
   <link rel="manifest" href="manifest.json">
-
   <meta name="theme-color" content="#f5f2eb">
-
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <style>
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       font-family: Arial, sans-serif;
       background: #f5f2eb;
       margin: 0;
-      padding: 20px;
+      padding: 15px;
       color: #333;
     }
 
     .app {
       max-width: 600px;
-      margin: 60px auto;
+      margin: auto;
+    }
+
+    h1 {
       text-align: center;
+      margin: 15px 0 3px;
+      font-size: 38px;
+    }
+
+    .sottotitolo {
+      text-align: center;
+      color: #777;
+      margin-bottom: 20px;
     }
 
     .card {
       background: white;
-      border-radius: 20px;
-      padding: 35px 25px;
+      border-radius: 18px;
+      padding: 22px;
       box-shadow: 0 3px 15px rgba(0,0,0,.08);
     }
 
-    h1 {
-      font-size: 42px;
-      margin-bottom: 5px;
-    }
-
-    .sottotitolo {
-      color: #777;
-      font-size: 18px;
-      margin-bottom: 35px;
-    }
-
-    .ok {
-      font-size: 60px;
+    .navigazione {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 15px;
     }
 
-    p {
-      line-height: 1.5;
+    .freccia {
+      border: none;
+      background: #eee;
+      border-radius: 10px;
+      font-size: 25px;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    .settimana {
+      flex: 1;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .dataSettimana {
+      font-size: 13px;
+      color: #888;
+      font-weight: normal;
+      margin-top: 3px;
+    }
+
+    .sceltaData {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .sceltaData input {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .esistente {
+      text-align: center;
+      color: #67815e;
+      font-size: 13px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .bottoneFoto {
+      display: block;
+      background: #eee;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    #anteprima {
+      width: 100%;
+      max-height: 450px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    textarea,
+    input[type=text] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 7px;
+      margin-bottom: 18px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    textarea {
+      height: 110px;
+      resize: vertical;
+    }
+
+    .titoloCampo {
+      font-weight: bold;
+    }
+
+    .persone {
+      margin: 12px 0 20px;
+    }
+
+    .persona {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 10px;
+    }
+
+    .salva {
+      width: 100%;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .salva:disabled {
+      opacity: .5;
+    }
+
+    #messaggio {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .errore {
+      color: #a33;
     }
 
   </style>
-
 </head>
 
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <h1>52 Ricordi</h1>
+  <h1>52 Ricordi</h1>
 
-    <div class="sottotitolo">
-      Un anno della nostra famiglia
+  <div class="sottotitolo">
+    Un anno della nostra famiglia
+  </div>
+
+  <div class="card">
+
+    <div class="navigazione">
+
+      <button class="freccia"
+              onclick="cambiaSettimana(-1)">
+        ‹
+      </button>
+
+      <div class="settimana">
+
+        <div id="numeroSettimana">
+          ...
+        </div>
+
+        <div class="dataSettimana"
+             id="dataSettimana">
+          caricamento...
+        </div>
+
+      </div>
+
+      <button class="freccia"
+              onclick="cambiaSettimana(1)">
+        ›
+      </button>
+
     </div>
 
-    <div class="card">
 
-      <div class="ok">📷</div>
+    <div class="sceltaData">
 
-      <h2>La nuova app è online!</h2>
+      Vai a una data:
 
-      <p>
-        Ogni settimana, una foto e un ricordo
-        della nostra famiglia.
-      </p>
+      <input type="date"
+             id="vaiData"
+             onchange="vaiAData()">
 
     </div>
+
+
+    <div id="esistente"
+         class="esistente">
+
+      ✓ Ricordo già salvato — puoi modificarlo
+
+    </div>
+
+
+    <label class="bottoneFoto">
+
+      📷 Scegli la foto della settimana
+
+      <input type="file"
+             id="foto"
+             accept="image/*"
+             onchange="mostraFoto()">
+
+    </label>
+
+
+    <img id="anteprima">
+
+
+    <div class="titoloCampo">
+      Cosa vuoi ricordare?
+    </div>
+
+    <textarea id="ricordo"
+      placeholder="Scrivi qui il ricordo di questa settimana..."></textarea>
+
+
+    <div class="titoloCampo">
+      📍 Dove?
+    </div>
+
+    <input type="text"
+           id="luogo"
+           placeholder="Facoltativo">
+
+
+    <div class="titoloCampo">
+      👨‍👩‍👧‍👦 Chi c'era?
+    </div>
+
+
+    <div class="persone">
+
+      <label class="persona">
+        <input type="checkbox" value="Luca">
+        Luca
+      </label>
+
+      <label class="persona">
+        <input type="checkbox" value="Alice">
+        Alice
+      </label>
+
+      <label class="persona">
+        <input type="checkbox" value="Linda">
+        Linda
+      </label>
+
+      <label class="persona">
+        <input type="checkbox" value="Milo">
+        Milo
+      </label>
+
+    </div>
+
+
+    <button class="salva"
+            id="salva"
+            onclick="salvaRicordo()">
+
+      SALVA IL RICORDO
+
+    </button>
+
+
+    <div id="messaggio"></div>
 
   </div>
 
+</div>
 
-  <script>
 
-    if ("serviceWorker" in navigator) {
+<script>
 
-      window.addEventListener(
-        "load",
-        function() {
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyWLlro2UwTfYTiuDbq1HpcdXoihxqa_wR-X2kZ9MsFK3-ewZQ1GM4GLBNaXoUBO3uYZw/exec";
 
-          navigator.serviceWorker.register(
-            "./service-worker.js"
-          );
+let annoCorrente;
+let settimanaCorrente;
+let fotoBase64 = null;
 
+
+/* =========================
+   AVVIO
+========================= */
+
+async function avviaApp() {
+
+  try {
+
+    const risposta =
+      await fetch(
+        API_URL +
+        "?azione=settimanaCorrente"
+      );
+
+    const dati =
+      await risposta.json();
+
+    annoCorrente =
+      dati.anno;
+
+    settimanaCorrente =
+      dati.settimana;
+
+    await mostraSettimana();
+
+  } catch (errore) {
+
+    mostraErrore(
+      "Impossibile collegarsi all'archivio."
+    );
+
+    console.error(errore);
+  }
+}
+
+
+/* =========================
+   MOSTRA SETTIMANA
+========================= */
+
+async function mostraSettimana() {
+
+  pulisciCampi();
+
+  document.getElementById(
+    "numeroSettimana"
+  ).innerText =
+    "SETTIMANA " +
+    settimanaCorrente;
+
+
+  try {
+
+    const rispostaInfo =
+      await fetch(
+        API_URL +
+        "?azione=infoSettimana" +
+        "&anno=" +
+        annoCorrente +
+        "&settimana=" +
+        settimanaCorrente
+      );
+
+    const info =
+      await rispostaInfo.json();
+
+
+    document.getElementById(
+      "dataSettimana"
+    ).innerText =
+      "dal " + info.data;
+
+
+    const rispostaRicordo =
+      await fetch(
+        API_URL +
+        "?azione=caricaRicordo" +
+        "&anno=" +
+        annoCorrente +
+        "&settimana=" +
+        settimanaCorrente
+      );
+
+    const dati =
+      await rispostaRicordo.json();
+
+
+    if (dati.trovato) {
+
+      document.getElementById(
+        "esistente"
+      ).style.display =
+        "block";
+
+
+      document.getElementById(
+        "ricordo"
+      ).value =
+        dati.ricordo || "";
+
+
+      document.getElementById(
+        "luogo"
+      ).value =
+        dati.luogo || "";
+
+
+      document
+        .querySelectorAll(
+          ".persone input"
+        )
+        .forEach(function(cb) {
+
+          cb.checked =
+            (dati.persone || [])
+              .includes(cb.value);
+
+        });
+    }
+
+  } catch (errore) {
+
+    mostraErrore(
+      "Errore durante il caricamento."
+    );
+
+    console.error(errore);
+  }
+}
+
+
+/* =========================
+   CAMBIA SETTIMANA
+========================= */
+
+function cambiaSettimana(delta) {
+
+  settimanaCorrente += delta;
+
+  if (settimanaCorrente < 1) {
+
+    annoCorrente--;
+    settimanaCorrente = 52;
+
+  }
+
+  if (settimanaCorrente > 52) {
+
+    annoCorrente++;
+    settimanaCorrente = 1;
+
+  }
+
+  mostraSettimana();
+}
+
+
+/* =========================
+   VAI A DATA
+========================= */
+
+function vaiAData() {
+
+  const valore =
+    document.getElementById(
+      "vaiData"
+    ).value;
+
+  if (!valore)
+    return;
+
+
+  const data =
+    new Date(
+      valore + "T12:00:00"
+    );
+
+
+  annoCorrente =
+    getISOYearJS(data);
+
+  settimanaCorrente =
+    getISOWeekJS(data);
+
+  mostraSettimana();
+}
+
+
+function getISOWeekJS(data) {
+
+  const d =
+    new Date(
+      Date.UTC(
+        data.getFullYear(),
+        data.getMonth(),
+        data.getDate()
+      )
+    );
+
+  const giorno =
+    d.getUTCDay() || 7;
+
+  d.setUTCDate(
+    d.getUTCDate() +
+    4 -
+    giorno
+  );
+
+  const inizioAnno =
+    new Date(
+      Date.UTC(
+        d.getUTCFullYear(),
+        0,
+        1
+      )
+    );
+
+  return Math.ceil(
+    (
+      (
+        (d - inizioAnno) /
+        86400000
+      ) + 1
+    ) / 7
+  );
+}
+
+
+function getISOYearJS(data) {
+
+  const d =
+    new Date(data);
+
+  d.setDate(
+    d.getDate() +
+    4 -
+    (d.getDay() || 7)
+  );
+
+  return d.getFullYear();
+}
+
+
+/* =========================
+   FOTO
+========================= */
+
+function mostraFoto() {
+
+  const file =
+    document.getElementById(
+      "foto"
+    ).files[0];
+
+  if (!file)
+    return;
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function(e) {
+
+      const anteprima =
+        document.getElementById(
+          "anteprima"
+        );
+
+      anteprima.src =
+        e.target.result;
+
+      anteprima.style.display =
+        "block";
+
+      fotoBase64 =
+        e.target.result
+          .split(",")[1];
+    };
+
+
+  reader.readAsDataURL(file);
+}
+
+
+/* =========================
+   PULISCI
+========================= */
+
+function pulisciCampi() {
+
+  document.getElementById(
+    "ricordo"
+  ).value = "";
+
+  document.getElementById(
+    "luogo"
+  ).value = "";
+
+  document.getElementById(
+    "foto"
+  ).value = "";
+
+  document.getElementById(
+    "anteprima"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "esistente"
+  ).style.display =
+    "none";
+
+  document.getElementById(
+    "messaggio"
+  ).innerText = "";
+
+  fotoBase64 = null;
+
+
+  document
+    .querySelectorAll(
+      ".persone input"
+    )
+    .forEach(
+      cb => cb.checked = false
+    );
+}
+
+
+/* =========================
+   SALVA
+========================= */
+
+async function salvaRicordo() {
+
+  const ricordo =
+    document.getElementById(
+      "ricordo"
+    ).value;
+
+
+  if (!ricordo.trim()) {
+
+    alert(
+      "Scrivi almeno qualche parola sul ricordo."
+    );
+
+    return;
+  }
+
+
+  const file =
+    document.getElementById(
+      "foto"
+    ).files[0];
+
+
+  const persone =
+    Array.from(
+      document.querySelectorAll(
+        ".persone input:checked"
+      )
+    ).map(
+      x => x.value
+    );
+
+
+  const dati = {
+
+    anno:
+      annoCorrente,
+
+    settimana:
+      settimanaCorrente,
+
+    ricordo:
+      ricordo,
+
+    luogo:
+      document.getElementById(
+        "luogo"
+      ).value,
+
+    persone:
+      persone,
+
+    foto:
+      !!file,
+
+    fotoBase64:
+      fotoBase64,
+
+    nomeFoto:
+      file ? file.name : "",
+
+    tipoFoto:
+      file ? file.type : ""
+  };
+
+
+  const bottone =
+    document.getElementById(
+      "salva"
+    );
+
+  const messaggio =
+    document.getElementById(
+      "messaggio"
+    );
+
+
+  bottone.disabled = true;
+
+  bottone.innerText =
+    file
+      ? "SALVATAGGIO FOTO ORIGINALE..."
+      : "SALVATAGGIO...";
+
+
+  try {
+
+    const risposta =
+      await fetch(
+        API_URL,
+        {
+          method: "POST",
+
+          body:
+            JSON.stringify(dati)
         }
       );
 
+
+    const risultato =
+      await risposta.json();
+
+
+    if (!risultato.successo) {
+      throw new Error(
+        risultato.errore ||
+        "Errore sconosciuto"
+      );
     }
 
-  </script>
+
+    messaggio.className = "";
+
+    messaggio.innerText =
+      "✓ Ricordo salvato!";
+
+
+    document.getElementById(
+      "esistente"
+    ).style.display =
+      "block";
+
+
+  } catch (errore) {
+
+    messaggio.className =
+      "errore";
+
+    messaggio.innerText =
+      "Errore nel salvataggio.";
+
+    console.error(errore);
+
+  } finally {
+
+    bottone.disabled =
+      false;
+
+    bottone.innerText =
+      "SALVA IL RICORDO";
+  }
+}
+
+
+/* =========================
+   ERRORI
+========================= */
+
+function mostraErrore(testo) {
+
+  const messaggio =
+    document.getElementById(
+      "messaggio"
+    );
+
+  messaggio.className =
+    "errore";
+
+  messaggio.innerText =
+    testo;
+}
+
+
+/* =========================
+   SERVICE WORKER
+========================= */
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    function() {
+
+      navigator.serviceWorker.register(
+        "./service-worker.js"
+      );
+    }
+  );
+}
+
+
+avviaApp();
+
+</script>
 
 </body>
-
 </html>
