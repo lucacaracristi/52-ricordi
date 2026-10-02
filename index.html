@@ -5,8 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>52 Ricordi</title>
+<link rel="manifest" href="manifest.json">
 
+<meta name="theme-color" content="#f5f2eb">
+
+<link rel="apple-touch-icon" href="icon-192.png">
+  
   <style>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("./service-worker.js");
+    });
+  }
+</script>
+
+    
     body {
       font-family: Arial, sans-serif;
       background: #f5f2eb;
@@ -74,6 +88,13 @@
     </div>
 
   </div>
-
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("./service-worker.js");
+    });
+  }
+</script>
+  
 </body>
 </html>
